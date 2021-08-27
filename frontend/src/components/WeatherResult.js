@@ -6,10 +6,21 @@ import lowTemp from '../images/icons/lowTemp.png';
 
 import './WeatherCard.scss'; 
 
-function WeatherResult(props) {
+function WeatherResult({
+  fetchWeather,
+  cityName,
+  highTemp,
+  humidity,
+  lowTemp,
+  wind,
+  date,
+  temp,
+  iconUrl,
+  currentCondition, 
+}) {
 
   function convertUnixTime(unixTime) {
-    let date = new Date(unixTime * 1000),
+    const date = new Date(unixTime * 1000),
       hours = date.getHours(),
       minutes = '0' + date.getMinutes(),
       seconds = '0' + date.getSeconds(),
@@ -18,7 +29,7 @@ function WeatherResult(props) {
   }
 
   useEffect(() => {
-    props.fetchWeather();
+    fetchWeather();
   }, []);
 
   function resultUI() {
@@ -28,42 +39,42 @@ function WeatherResult(props) {
           <div className='columns is-mobile WeatherCard__content__columns'>
             <div className='column has-text-centered'>
               <div className='is-size-3 WeatherCard__content__city'>
-                {props.cityName}
+                {cityName}
               </div>
               <div className='columns is-mobile'>
                 <div className='column'>
                   <div>
                     <img className='WeatherCard__icon' src={highTemp} alt="high temperature"/>
                   </div>
-                    {props.highTemp}
+                    {highTemp}
                   <div>
                     <FontAwesomeIcon icon={faTint} className='WeatherCard__icon'/>
                   </div>
-                  {props.humidity}
+                  {humidity}
                 </div>
                 <div className='column'>
                   <div>
                     <img className='WeatherCard__icon' src={lowTemp} alt="low temperature"/>
                   </div>
-                  {props.lowTemp}
+                  {lowTemp}
                   <div>
                     <FontAwesomeIcon icon={faWind} className='WeatherCard__icon'/>
                   </div>
-                  {props.wind}
+                  {wind}
                 </div>
               </div>
             </div>
             <div className='column has-text-centered'>
             <div className='WeatherCard__date'>
-                {props.date}
+                {date}
               </div>
               <div className='WeatherCard__temp'>
-                {props.temp}
+                {temp}
               </div>
               <div>
-                <img className='WeatherCard__desc__img' alt='weather icon' src={props.iconUrl}></img>
+                <img className='WeatherCard__desc__img' alt='weather icon' src={iconUrl}></img>
                 <div>
-                  {props.currentCondition}
+                  {currentCondition}
                 </div>
               </div>
             </div>

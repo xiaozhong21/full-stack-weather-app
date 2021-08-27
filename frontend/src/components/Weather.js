@@ -2,12 +2,17 @@ import React, { useState, useEffect } from 'react';
 import WeatherResult from './WeatherResult';
 import './WeatherCard.scss';
 
+// have one general container component which controls the positioning of
+// test
+// the search box and the weather cards
+// then a separate component for the search box
+// and a seaprate componetn for the results
 function Weather() {
   const [postcodeInput, setPostcodeInput] = useState('');
   const [displayResult, setDisplayResult] = useState(false);
   const [error, setError] = useState(false);
   
-  //States for WeatherResult child component
+  // probably would live in the container component
   const [date, setDate] = useState([]);
   const [temp, setTemp] = useState([]);
   const [highTemp, setHighTemp] = useState([]);
@@ -23,6 +28,7 @@ function Weather() {
 
   const [weatherInfo, setWeatherInfo] = useState([]);
 
+  // go in search component
   function handleInputChange(zipCodeEvent) {
     zipCodeEvent.persist();
     setPostcodeInput(zipCodeEvent.target.value);
@@ -30,6 +36,7 @@ function Weather() {
     setError(false);
   }
 
+  // go in search component
   async function handleSubmit(zipCodeEvent) {
     zipCodeEvent.preventDefault();
     if (handleValidation()) {   
@@ -62,69 +69,86 @@ function Weather() {
     return regex.test(postcodeInput);
   }
 
+// keep in search component
 async function fetchWeather() {
   const response = await fetch('http://localhost:4001/weather');
-  await response.json().then(data => {   
-    setDate(() => {
-      let result = [];
-      for (let i = 0; i < 40; i += 8) {
-        let dayOfWeek = new Date(data.list[i].dt * 1000).toLocaleString("en-US", {weekday: "long"});
-        result.push(dayOfWeek);
-      }
-      return result;
-    });
-    setTemp(() => {
-      let result = [];
-      for (let i = 0; i < 40; i += 8) {
-        result.push(Math.round((data.list[i].main.temp - 273.15) * 9/5 + 32) + '°F');
-      }
-      return result;
-    });
-    setHighTemp(() => {
-      let result = [];
-      for (let i = 0; i < 40; i += 8) {
-        result.push(Math.round((data.list[i].main.temp_max - 273.15) * 9/5 + 32) + '°F');
-      }
-      return result;
-    });
-    setLowTemp(() => {
-      let result = [];
-      for (let i = 0; i < 40; i += 8) {
-        result.push(Math.round((data.list[i].main.temp_min - 273.15) * 9/5 + 32) + '°F');
-      }
-      return result;
-    });
-    setHumidity(() => {
-      let result = [];
-      for (let i = 0; i < 40; i += 8) {
-        result.push(data.list[i].main.humidity + '%');
-      }
-      return result;
-    });
-    setWind(() => {
-      let result = [];
-      for (let i = 0; i < 40; i += 8) {
-        result.push(Math.round(data.list[i].wind.speed) + ' mph');
-      }
-      return result;
-    });
-    setCurrentCondition(() => {
-      let result = [];
-      for (let i = 0; i < 40; i += 8) {
-        result.push(data.list[i].weather[0].main);
-      }
-      return result;
-    });
-    setCityName(data.city.name);
-    setSunrise(data.city.sunrise);
-    setSunset(data.city.sunset);
-    setIcons(() => {
-      let result = [];
-      for (let i = 0; i < 40; i += 8) {
-        result.push(data.list[i].weather[0].icon);
-      }
-      return result;
-    });
+  const formatDate = (dateString) => {
+    return new Date(dateString * 1000).toLocaleString("en-US", {weekday: "long"});
+  };
+  const formatTemp = (temp) => {
+    return Math.round((data.list[i].main.temp - 273.15) * 9/5 + 32) + '°F';
+  };
+
+  const weatherInfoItems = data.list.map((item) => {
+    return {
+      date: formatDate(item.dt),
+      temp: formatTemp(item.main.temp),
+      highTemp: formatTemp(item.main.temp_max),
+    };
+  });
+
+
+
+  const data = response.json();
+  setDate(() => {
+    let result = [];
+    for (let i = 0; i < 40; i += 8) {
+      let dayOfWeek = new Date(data.list[i].dt * 1000).toLocaleString("en-US", {weekday: "long"});
+      result.push(dayOfWeek);
+    }
+    return result;
+  });
+  setTemp(() => {
+    let result = [];
+    for (let i = 0; i < 40; i += 8) {
+      result.push(Math.round((data.list[i].main.temp - 273.15) * 9/5 + 32) + '°F');
+    }
+    return result;
+  });
+  setHighTemp(() => {
+    let result = [];
+    for (let i = 0; i < 40; i += 8) {
+      result.push(Math.round((data.list[i].main.temp_max - 273.15) * 9/5 + 32) + '°F');
+    }
+    return result;
+  });
+  setLowTemp(() => {
+    let result = [];
+    for (let i = 0; i < 40; i += 8) {
+      result.push(Math.round((data.list[i].main.temp_min - 273.15) * 9/5 + 32) + '°F');
+    }
+    return result;
+  });
+  setHumidity(() => {
+    let result = [];
+    for (let i = 0; i < 40; i += 8) {
+      result.push(data.list[i].main.humidity + '%');
+    }
+    return result;
+  });
+  setWind(() => {
+    let result = [];
+    for (let i = 0; i < 40; i += 8) {
+      result.push(Math.round(data.list[i].wind.speed) + ' mph');
+    }
+    return result;
+  });
+  setCurrentCondition(() => {
+    let result = [];
+    for (let i = 0; i < 40; i += 8) {
+      result.push(data.list[i].weather[0].main);
+    }
+    return result;
+  });
+  setCityName(data.city.name);
+  setSunrise(data.city.sunrise);
+  setSunset(data.city.sunset);
+  setIcons(() => {
+    let result = [];
+    for (let i = 0; i < 40; i += 8) {
+      result.push(data.list[i].weather[0].icon);
+    }
+    return result;
   });
 }
 
@@ -195,6 +219,14 @@ useEffect(() => {
         </div>
       </div>
       <div className='columns'>
+        {/*
+        weatherInfoItems.filter((item, index) => item.index > 0).map(item) => return (
+          <div className="column">
+            {displayResult ? <WeatherResult props /> : null}
+          </div>
+        );
+        */}
+        
         <div className="column">
           {displayResult ? <WeatherResult fetchWeather={fetchWeather} date={date[1]} temp={temp[1]} highTemp={highTemp[1]} lowTemp={lowTemp[1]} humidity={humidity[1]} wind={wind[1]} currentCondition={currentCondition[1]} cityName={cityName} sunrise={sunrise} sunset={sunset} icons={icons[1]} iconUrl={iconUrl[1]} /> : null}
         </div>

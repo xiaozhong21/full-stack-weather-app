@@ -21,15 +21,17 @@ function Weather() {
   const [icons, setIcons] = useState([]);
   const [iconUrl, setIconUrl] = useState([]);
 
-  function handleInputChange(e) {
-    e.persist();
-    setPostcodeInput(e.target.value);
+  const [weatherInfo, setWeatherInfo] = useState([]);
+
+  function handleInputChange(zipCodeEvent) {
+    zipCodeEvent.persist();
+    setPostcodeInput(zipCodeEvent.target.value);
     setDisplayResult(false);
     setError(false);
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSubmit(zipCodeEvent) {
+    zipCodeEvent.preventDefault();
     if (handleValidation()) {   
       setError(false);
       let zip = {
@@ -61,7 +63,7 @@ function Weather() {
   }
 
 async function fetchWeather() {
-  let response = await fetch('http://localhost:4001/weather');
+  const response = await fetch('http://localhost:4001/weather');
   await response.json().then(data => {   
     setDate(() => {
       let result = [];
@@ -174,7 +176,22 @@ useEffect(() => {
           </div>
         </div>
         <div className="column">
-          {displayResult ? <WeatherResult fetchWeather={fetchWeather} date={date[0]} temp={temp[0]} highTemp={highTemp[0]} lowTemp={lowTemp[0]} humidity={humidity[0]} wind={wind[0]} currentCondition={currentCondition[0]} cityName={cityName} sunrise={sunrise} sunset={sunset} icons={icons[0]} iconUrl={iconUrl[0]} /> : null}
+          {displayResult ?
+            <WeatherResult
+              fetchWeather={fetchWeather}
+              date={date[0]}
+              temp={temp[0]}
+              highTemp={highTemp[0]}
+              lowTemp={lowTemp[0]}
+              humidity={humidity[0]}
+              wind={wind[0]}
+              currentCondition={currentCondition[0]}
+              cityName={cityName}
+              sunrise={sunrise}
+              sunset={sunset}
+              icons={icons[0]}
+              iconUrl={iconUrl[0]}
+            /> : null}
         </div>
       </div>
       <div className='columns'>
